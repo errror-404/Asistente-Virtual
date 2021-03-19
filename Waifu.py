@@ -10,8 +10,7 @@ engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice',voices[2].id)
 name = "Alexa"
-for voice in voices:
-    print(voice)
+
 
 def talk(text):
     engine.say(text)
