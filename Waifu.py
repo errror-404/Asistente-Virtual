@@ -1,6 +1,8 @@
 import speech_recognition as sr
 import pyttsx3
-import time
+import datetime
+import pywhatkit
+
 
 
 listener = sr.Recognizer()
@@ -25,18 +27,29 @@ def listen():
             if name in rec:
                 rec = rec.replace(name , "")
                 print(rec)
-            return rec
+            
 
     except:
        pass
-    
+    return rec
 
 def run():
     rec = listen()
 
     if "Reproduce" in rec:
-        talk(rec)
-    else:
-        talk("Lo siento no se de que me estas hablando")
+        music = rec.replace('Reproduce', ' ')
+        pywhatkit.playonyt(music)
+        talk('reproduciendo' + music)
+       
+   
+    if "Busca" in rec:
+        bus = rec.replace('Busca', ' ')
+        pywhatkit.search(bus)
+        talk('Buscando' + bus)
+   
+    if "hora" in rec:
+        hora = datetime.datetime.now().strftime('%I:%M %p')
+        talk('Son las ' + hora)
+   
         
 run()
