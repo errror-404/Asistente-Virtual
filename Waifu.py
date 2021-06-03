@@ -7,7 +7,11 @@ import threading
 import time
 import requests
 import json
-
+import tkinter as tk
+from tkvideo import *
+import threading
+import chistesESP as c
+import subprocess
 
 engine = pyttsx3.init()
 newVoiceRate = 145
@@ -18,6 +22,28 @@ name = "Alexa"
 API_KEY = "tBSH-NxWvk48"
 PROJECT_TOKEN = "t-TZUTkj4xff"
 RUN_TOKEN = "tHbT-Tf3cnHT"
+
+
+class App(threading.Thread):
+    
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.start()
+        
+    def callback(self):
+        self.root.quit()
+
+    def run(self):
+        self.root = tk.Tk()
+        self.root.protocol("WM_DELETE_WINDOW", self.callback)
+
+        label = tk.Label(self.root, text="Hello World")
+        label.pack()
+        
+        player = tkvideo("video.mp4", label ,loop = 1, size = (1280,720))
+        player.play()
+        
+        self.root.mainloop()
 
 
 class Data:
@@ -101,7 +127,7 @@ def get_audio():
         try:
             said = r.recognize_google(audio, language="es-MX")
         except Exception as e:
-            speak("Me aburro, por favor dime algo..")
+            print(e)
 
     return said.lower()
 
@@ -126,6 +152,8 @@ def main():
 
     UPDATE_COMMAND = "actualizar"
     BUSCAR_COMMAND = "busca"
+    
+    
 
     while True:
         print("Listening...")
@@ -151,22 +179,80 @@ def main():
         if result:
             speak(result)
 
-        if text.find(END_PHRASE) != -1:  # stop loop
+        elif text.find(END_PHRASE) != -1:  # stop loop
             print("Exit")
+            
             break
-        if "reproduce" in text:
+        elif "reproduce" in text:
             music = text.replace('reproduce', ' ')
             pywhatkit.playonyt(music)
             speak(music)
 
-        if "busca" in text:
+        elif "busca" in text:
             bus = text.replace('busca', ' ')
             pywhatkit.search(bus)
             speak('Buscando' + bus)
 
-        if "hora" in text:
+        elif "hora" in text:
             hora = datetime.datetime.now().strftime('%I:%M %p')
             speak('Son las ' + hora)
+            
+            
+       
+        elif "significa" in text:
+            sig = text.replace('significa', ' ')
+            info = pywhatkit.info(sig)
+            speak('Esto es lo que encontre en wikipedia acerca de: ' + sig)
+            speak(info)
+            
+        elif "abrir la calculadora" in text:
+            abrir = text.replace('abrir', ' ')
+            speak("abriendo " + abrir)
+            subprocess.Popen('C:\\Windows\\System32\\calc.exe')
+            
+        elif "abrir notepad" in text:
+            abrir = text.replace('abrir', ' ')
+            speak("abriendo " + abrir)
+            subprocess.Popen('C:\\Windows\\System32\\notepad.exe')
+            
+        elif "abrir paint" in text:
+            abrir = text.replace('abrir', ' ')
+            speak("abriendo " + abrir)
+            subprocess.Popen('C:\\Windows\\System32\\mspaint.exe')
+            
+        elif "abrir recortadora" in text:
+            abrir = text.replace('abrir', ' ')
+            speak("abriendo " + abrir)
+            subprocess.Popen('C:\\Windows\\System32\\SnippingTool.exe')
+            
+        elif "abrir cmd" in text:
+            abrir = text.replace('abrir', ' ')
+            speak("abriendo " + abrir)
+            subprocess.Popen('C:\\Windows\\System32\\cmd.exe')
+            
+        elif "abrir power shell" in text:
+            abrir = text.replace('abrir', ' ')
+            speak("abriendo " + abrir)
+            subprocess.Popen('C:\\Windows\\System32\\powershell.exe')
+            
+        elif "abrir control panel" in text:
+            abrir = text.replace('abrir', ' ')
+            speak("abriendo " + abrir)
+            subprocess.Popen('C:\\Windows\\System32\\control.exe')
+            
+        elif "abrir word pad" in text:
+            abrir = text.replace('abrir', ' ')
+            speak("abriendo " + abrir)
+            subprocess.Popen('C:\\Windows\\System32\\write.exe')
+        elif "dime un chiste" in text:
+            chiste = c.get_random_chiste()
+            speak(chiste)
+
+            
 
 
-main()
+            
+app = App()
+main() 
+        
+
